@@ -15,13 +15,17 @@ import { ProtocolBufferService } from './protocol_buffer/protocol-buffer.service
 
 @Controller('reading_list')
 export class ReadingListController {
-  private _isProtocolBuffer = true;
+  private _isProtocolBuffer = false;
 
   constructor(
     private readonly readingListService: ReadingListService,
     private readonly protocolBufferService: ProtocolBufferService,
     private logger: Logger,
-  ) {}
+  ) {
+    // readingListService
+    //   .init()
+    //   .then(() => this.logger.log('Init reading list service'));
+  }
 
   @Post()
   async createReadingListItem(@Body() body: any): Promise<ReadingListItem> {

@@ -2,14 +2,25 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ReadingListInterfaceService } from './reading-list-interface.service';
 import { ReadingListCacheDbService } from './db/reading-list-cache-db.service';
 import { ReadingListItem } from './reading_list_item';
+import { ReadingListLocalFileService } from './db/reading-list-local-file.service';
 
 @Injectable()
 export class ReadingListService implements ReadingListInterfaceService {
   constructor(
     private readonly readingListCacheDbService: ReadingListCacheDbService,
+    private readonly readingListLocalFileService: ReadingListLocalFileService,
     private readonly logger: Logger,
-  ) {}
+  ) {
+    this.init().then(() => this.logger.log(`Finished loading`));
+  }
 
+  async init(): Promise<void> {
+    const items: ReadingListItem[] = await this.readingListLocalFileService.load();
+    for (const readingListItem of items) {
+      this.logger.log(`Loaded ${readingListItem.id}`);
+      this.readingListCacheDbService.saveReadingListItem(readingListItem);
+    }
+  }
   async heartBeat(): Promise<string> {
     this.logger.log('heartBeat');
     return 'heartBeat';

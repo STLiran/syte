@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ReadingListService } from './reading-list.service';
 import { ReadingListCacheDbService } from './db/reading-list-cache-db.service';
-import { ReadingListMongoDbService } from './db/reading-list-mongo-db.service';
+import { ReadingListLocalFileService } from './db/reading-list-local-file.service';
 import { Logger } from '@nestjs/common';
 import { ReadingListItem } from './reading_list_item';
 import { ReadingListController } from './reading-list.controller';
@@ -21,7 +21,7 @@ describe('ReadingListController', () => {
         ReadingListService,
         ProtocolBufferService,
         {
-          provide: ReadingListMongoDbService,
+          provide: ReadingListLocalFileService,
           useClass: ReadingListCacheDbService,
         },
         ReadingListCacheDbService,
@@ -35,6 +35,7 @@ describe('ReadingListController', () => {
 
   it('test Buffer.', async () => {
     service.isProtocolBuffer = false;
+    const t = await service.getAllReadingListItems();
     const actual = await service.createReadingListItem(
       new ReadingListItem(ID, TXT, IS_DONE),
     );
