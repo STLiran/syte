@@ -16,7 +16,11 @@ export class LocalFileMock implements LocalFileInterface {
     return undefined;
   }
 
-  save(items: ReadingListItem[]): ReadingListItem[] {
-    return [];
+  delete(): Promise<boolean> {
+    return new Promise<boolean>(() => true);
+  }
+
+  save(items: ReadingListItem[]): Promise<ReadingListItem[]> {
+    return new Promise<ReadingListItem[]>(() => []);
   }
 }
