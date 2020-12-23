@@ -9,8 +9,8 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { ReadingListService } from './reading-list.service';
-import { ReadingListItem } from './reading_list_item';
+import { ReadingListService } from './services/reading-list.service';
+import { ReadingListItem } from './dto/reading_list_item';
 import { ProtocolBufferService } from './protocol_buffer/protocol-buffer.service';
 
 @Controller('reading_list')

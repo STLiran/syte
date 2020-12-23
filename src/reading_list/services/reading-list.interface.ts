@@ -1,6 +1,6 @@
-import { ReadingListItem } from './reading_list_item';
+import { ReadingListItem } from '../dto/reading_list_item';
 
-export interface ReadingListInterfaceService {
+export interface ReadingListInterface {
   heartBeat(): Promise<string>;
 
   createReadingListItem(p: ReadingListItem): Promise<ReadingListItem>;

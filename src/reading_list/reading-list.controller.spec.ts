@@ -1,11 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ReadingListService } from './reading-list.service';
-import { ReadingListCacheDbService } from './db/reading-list-cache-db.service';
-import { ReadingListLocalFileService } from './db/reading-list-local-file.service';
+import { ReadingListService } from './services/reading-list.service';
+import { CacheService } from './db/cache/cache.service';
+import { LocalFileService } from './db/local-file/local-file.service';
 import { Logger } from '@nestjs/common';
-import { ReadingListItem } from './reading_list_item';
+import { ReadingListItem } from './dto/reading_list_item';
 import { ReadingListController } from './reading-list.controller';
 import { ProtocolBufferService } from './protocol_buffer/protocol-buffer.service';
+import { LocalFileMock } from './db/local-file/local-file.mock';
 
 describe('ReadingListController', () => {
   let service: ReadingListController;
@@ -21,10 +22,10 @@ describe('ReadingListController', () => {
         ReadingListService,
         ProtocolBufferService,
         {
-          provide: ReadingListLocalFileService,
-          useClass: ReadingListCacheDbService,
+          provide: LocalFileService,
+          useClass: LocalFileMock,
         },
-        ReadingListCacheDbService,
+        CacheService,
         Logger,
       ],
     }).compile();

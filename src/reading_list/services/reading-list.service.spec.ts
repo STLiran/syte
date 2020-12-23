@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ReadingListService } from './reading-list.service';
-import { ReadingListCacheDbService } from './db/reading-list-cache-db.service';
-import { ReadingListLocalFileService } from './db/reading-list-local-file.service';
+import { CacheService } from '../db/cache/cache.service';
+import { LocalFileService } from '../db/local-file/local-file.service';
 import { Logger } from '@nestjs/common';
-import { ReadingListItem } from './reading_list_item';
+import { ReadingListItem } from '../dto/reading_list_item';
 
 describe('ReadingListService', () => {
   let service: ReadingListService;
@@ -16,10 +16,10 @@ describe('ReadingListService', () => {
       providers: [
         ReadingListService,
         {
-          provide: ReadingListLocalFileService,
-          useClass: ReadingListCacheDbService,
+          provide: LocalFileService,
+          useClass: CacheService,
         },
-        ReadingListCacheDbService,
+        CacheService,
         Logger,
       ],
     }).compile();

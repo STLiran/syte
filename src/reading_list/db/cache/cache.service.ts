@@ -1,14 +1,17 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { ReadingListItem } from '../reading_list_item';
-import { ReadingListDbInterface } from './reading-list-db-interface';
-import { ExistingItemException } from '../existing-item-exception';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { ReadingListItem } from '../../dto/reading_list_item';
+import { CacheInterface } from './cache-interface';
+import { ExistingItemException } from '../../exceptions/existing-item-exception';
 
 @Injectable()
-export class ReadingListCacheDbService implements ReadingListDbInterface {
+export class CacheService implements CacheInterface {
   private map: Map<string, ReadingListItem> = new Map();
+
+  constructor(private logger: Logger) {}
 
   saveReadingListItem(item: ReadingListItem): ReadingListItem {
     if (!this.map.has(item.id)) {
+      this.logger.log(`The item id ${item.id} was saved to the cache.`);
       this.map.set(item.id, item);
       return item;
     } else {

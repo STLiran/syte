@@ -1,7 +1,7 @@
-import { ReadingListDbInterface } from './reading-list-db-interface';
-import { ReadingListItem } from '../reading_list_item';
+import { ReadingListItem } from '../../dto/reading_list_item';
 import { Injectable, Logger } from '@nestjs/common';
-import { ReadingListCacheDbService } from './reading-list-cache-db.service';
+import { CacheService } from '../cache/cache.service';
+import { LocalFileInterface } from './local-file.interface';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fs = require('fs');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -14,14 +14,10 @@ const lineReader = require('line-reader');
 // const es = require('event-stream');
 
 @Injectable()
-export class ReadingListLocalFileService {
-  //} implements ReadingListDbInterface {
-  private PATH = 'src/reading_list/db/storage/todo_list.txt';
+export class LocalFileService implements LocalFileInterface {
+  private PATH = 'src/reading_list/resources/todo_list.txt';
 
-  constructor(
-    private logger: Logger,
-    private readingListCacheDbService: ReadingListCacheDbService,
-  ) {}
+  constructor(private logger: Logger, private cacheService: CacheService) {}
 
   async load(): Promise<ReadingListItem[]> {
     const arr: ReadingListItem[] = [];
@@ -30,7 +26,7 @@ export class ReadingListLocalFileService {
     //   const temp: string[] = line.split(':');
     //   const item = new ReadingListItem(temp[0], temp[1], temp[2] == 'V');
     //   arr.push(item);
-    //   // readingListCacheDbService.saveReadingListItem(item);
+    //   // cacheService.saveReadingListItem(item);
     //   if (!line) {
     //     cb(false); // stop reading
     //   } else {
@@ -41,7 +37,7 @@ export class ReadingListLocalFileService {
     await lineReader.eachLine(this.PATH, async (line) => {
       const temp: string[] = line.split(':');
       const item = new ReadingListItem(temp[0], temp[1], temp[2] == 'V');
-      await this.readingListCacheDbService.saveReadingListItem(item);
+      await this.cacheService.saveReadingListItem(item);
       arr.push(item);
     });
     return arr;
@@ -136,44 +132,33 @@ export class ReadingListLocalFileService {
     return arr;
   }
 
-  save(items: ReadingListItem[]): ReadingListItem[] {
+  async delete(): Promise<boolean> {
     try {
-      // const stream = gracefulFs.createWriteStream(this.PATH, { flags: 'a+' });
+      this.logger.log(`Cleaning local file`);
+
+      // {flags: 'w'} erase and write a new file
       const stream = gracefulFs.createWriteStream(this.PATH, { flags: 'w' });
-      this.logger.log(new Date().toISOString());
-      items.forEach((item) => {
-        stream.write(`${item.id}:${item.txt}:${item.isDone ? 'V' : 'X'}\n`);
-      });
-      console.log(new Date().toISOString());
-      stream.end();
-      return items;
+      await stream.end();
+      return true;
     } catch (e) {
-      this.logger.log('msg');
+      this.logger.error('The following error has occurred', e);
+      return false;
     }
   }
 
-  deleteReadingListItem(id: string): ReadingListItem {
-    return undefined;
-  }
-
-  getAllReadingListItems(): ReadingListItem[] {
-    return [];
-  }
-
-  getReadingListItem(id: string): ReadingListItem {
-    return undefined;
-  }
-
-  patchReadingListItem(id: string, isDone: boolean): ReadingListItem {
-    return undefined;
-  }
-
-  // saveReadingListItem(item: ReadingListItem): ReadingListItem {
-  //   this.save([item]);
-  //   return item;
-  // }
-
-  updateReadingListItem(p: ReadingListItem): ReadingListItem {
-    return undefined;
+  async save(items: ReadingListItem[]): Promise<ReadingListItem[]> {
+    try {
+      this.logger.log(`saving ${items?.length} items`);
+      //   {flags: 'a' / 'a+' append and (plus for nonexistent as well)
+      const stream = gracefulFs.createWriteStream(this.PATH, { flags: "'a+" });
+      items.forEach((item) => {
+        stream.write(`${item.id}:${item.txt}:${item.isDone ? 'V' : 'X'}\n`);
+      });
+      await stream.end();
+      return items;
+    } catch (e) {
+      this.logger.error('The following error has occurred', e);
+      return [];
+    }
   }
 }

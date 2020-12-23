@@ -1,11 +1,11 @@
-import { ReadingListCacheDbService } from './reading-list-cache-db.service';
+import { CacheService } from './cache.service';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ReadingListItem } from '../reading_list_item';
-import { BadRequestException } from '@nestjs/common';
-import { ExistingItemException } from '../existing-item-exception';
+import { ReadingListItem } from '../../dto/reading_list_item';
+import { BadRequestException, Logger } from '@nestjs/common';
+import { ExistingItemException } from '../../exceptions/existing-item-exception';
 
-describe('ReadingListCacheDbService', () => {
-  let service: ReadingListCacheDbService;
+describe('CacheService', () => {
+  let service: CacheService;
   const ID = '1';
   const TXT = 'last-test';
   const IS_DONE = false;
@@ -15,10 +15,10 @@ describe('ReadingListCacheDbService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ReadingListCacheDbService],
+      providers: [CacheService, Logger],
     }).compile();
 
-    service = module.get<ReadingListCacheDbService>(ReadingListCacheDbService);
+    service = module.get<CacheService>(CacheService);
   });
 
   it('No Reading_list_item should be returned, Upon un-existing list item', () => {

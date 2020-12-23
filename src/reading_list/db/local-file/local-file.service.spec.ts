@@ -1,30 +1,22 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ReadingListLocalFileService } from './reading-list-local-file.service';
+import { LocalFileService } from './local-file.service';
 import { Logger } from '@nestjs/common';
-import { ReadingListItem } from '../reading_list_item';
-import { ReadingListCacheDbService } from './reading-list-cache-db.service';
+import { ReadingListItem } from '../../dto/reading_list_item';
+import { CacheService } from '../cache/cache.service';
 import { Guid } from 'guid-typescript';
 
-describe('ReadingListLocalFileService', () => {
-  let service: ReadingListLocalFileService;
-  let readingListCacheDbService: ReadingListCacheDbService;
+describe('LocalFileService', () => {
+  let service: LocalFileService;
+  let readingListCacheDbService: CacheService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        ReadingListLocalFileService,
-        ReadingListCacheDbService,
-        Logger,
-      ],
+      providers: [LocalFileService, CacheService, Logger],
     }).compile();
 
-    service = module.get<ReadingListLocalFileService>(
-      ReadingListLocalFileService,
-    );
+    service = module.get<LocalFileService>(LocalFileService);
 
-    readingListCacheDbService = module.get<ReadingListCacheDbService>(
-      ReadingListCacheDbService,
-    );
+    readingListCacheDbService = module.get<CacheService>(CacheService);
   });
 
   it('No Reading_list_item should be returned, Upon un-existing list item', async () => {
@@ -39,6 +31,9 @@ describe('ReadingListLocalFileService', () => {
     }
     const result: ReadingListItem[] = await service.save(arr);
     // let res2: ReadingListItem[] = [];
+
+    //TODO SLEEP
+
     const res2: ReadingListItem[] = await service.load();
     // await service.load();
     // expect(result).toBe(res2);

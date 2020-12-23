@@ -29,7 +29,17 @@
 ## Installation
 
 ```bash
-$ npm install
+$ yarn install
+$ nest build
+
+$ WIN64: yarn build:win
+$ OSX(untested):yarn build:osx
+$ Alternativly use just: 
+    nest build
+  and copy the file yourself from:
+    src\reading_list\protocol_buffer\*.proto
+  to: 
+    dist\reading_list\protocol_buffer\ 
 ```
 
 ## Running the app

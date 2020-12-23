@@ -1,15 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { GrpcObject, ProtobufMessage } from 'grpc';
 import { Root } from 'protobufjs';
+import { ProtocolBuffeInterface } from './protocol-buffer.interface';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const protoLoader = require('@grpc/proto-loader');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const grpc = require('grpc');
+// const protoLoader = require('@grpc/proto-loader');
+// // eslint-disable-next-line @typescript-eslint/no-var-requires
+// const grpc = require('grpc');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const protocolBuffer = require('protobufjs');
 
 @Injectable()
-export class ProtocolBufferService {
+export class ProtocolBufferService implements ProtocolBuffeInterface {
   private readonly PROTO_PATH: string;
   constructor(private logger: Logger) {
     this.PROTO_PATH = __dirname + '/item.proto';
@@ -36,9 +36,7 @@ export class ProtocolBufferService {
         return null;
       }
       const message = Item.create(payload);
-      const buffer: Uint8Array = Item.encode(message).finish();
-
-      return buffer;
+      return Item.encode(message).finish();
     } catch (e) {
       this.logger.error('The following error has occurred:' + e, e);
     }

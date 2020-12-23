@@ -1,6 +1,6 @@
-import { ReadingListItem } from '../reading_list_item';
+import { ReadingListItem } from '../../dto/reading_list_item';
 
-export interface ReadingListDbInterface {
+export interface CacheInterface {
   saveReadingListItem(p: ReadingListItem): ReadingListItem;
 
   getAllReadingListItems(): ReadingListItem[];
