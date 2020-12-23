@@ -2,6 +2,7 @@ import { ReadingListCacheDbService } from './reading-list-cache-db.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ReadingListItem } from '../reading_list_item';
 import { BadRequestException } from '@nestjs/common';
+import { ExistingItemException } from '../existing-item-exception';
 
 describe('ReadingListCacheDbService', () => {
   let service: ReadingListCacheDbService;
@@ -30,7 +31,6 @@ describe('ReadingListCacheDbService', () => {
     const item: ReadingListItem = service.saveReadingListItem(p);
     expect(item.id).toBe(ID);
 
-
     const items: ReadingListItem[] = service.getAllReadingListItems();
     expect(items.length).toBe(1);
   });
@@ -40,7 +40,9 @@ describe('ReadingListCacheDbService', () => {
     const item: ReadingListItem = service.saveReadingListItem(p1);
     expect(item.id).toBe(ID);
 
-    expect(() => service.saveReadingListItem(p1)).toThrow(BadRequestException);
+    expect(() => service.saveReadingListItem(p1)).toThrow(
+      ExistingItemException,
+    );
   });
 
   it('Get unexciting reading_list', () => {

@@ -9,6 +9,7 @@ import { ProtocolBufferService } from './protocol_buffer/protocol-buffer.service
 
 describe('ReadingListController', () => {
   let service: ReadingListController;
+  let bufferService: ProtocolBufferService;
   const ID = '1';
   const TXT = 'last-test';
   const IS_DONE = false;
@@ -29,62 +30,26 @@ describe('ReadingListController', () => {
     }).compile();
 
     service = module.get<ReadingListController>(ReadingListController);
+    bufferService = module.get<ProtocolBufferService>(ProtocolBufferService);
   });
 
-  it('test heartBeat.', async () => {
-    expect(
-      await service.createReadingListItem(
-        new ReadingListItem('IDm', 'txt', false),
-      ),
-    ).toBe('heartBeat');
-  });
-
-  it('test createReadingListItem.', async () => {
+  it('test Buffer.', async () => {
+    service.isProtocolBuffer = false;
     const actual = await service.createReadingListItem(
       new ReadingListItem(ID, TXT, IS_DONE),
     );
-    expect(actual.id).toEqual(ID);
-  });
 
-  it('test patchReadingListItem.', async () => {
+    const encoded: Uint8Array = await bufferService.encode(actual);
+    service.isProtocolBuffer = true;
+
     try {
-      await service.patchReadingListItem(ID, { isDone: IS_DONE });
-      expect(0).toBe(1);
+      const actual2 = await service.createReadingListItem(encoded);
+      console.log('actual2' + actual2);
+      expect(true).toBeFalsy(); //Should not be reached
     } catch (e) {
-      expect(e.status).toBe(400);
-    }
-  });
-
-  it('test deleteReadingListItem.', async () => {
-    try {
-      await service.deleteReadingListItem(ID);
-      expect(0).toBe(1);
-    } catch (e) {
-      expect(e.status).toBe(400);
-    }
-  });
-
-  it('No reading_list should returned Upon no existing items.', async () => {
-    expect((await service.getAllReadingListItems()).length).toBe(0);
-  });
-
-  it('No reading_list should returned Upon un valid id.', async () => {
-    try {
-      await service.getReadingListItem(ID);
-      expect(0).toBe(1);
-    } catch (e) {
-      expect(e.status).toBe(400);
-    }
-  });
-
-  it('Update new reading list  item results at exception', async () => {
-    try {
-      await service.updateReadingListItem(
-        new ReadingListItem(ID, TXT, IS_DONE),
-      );
-      expect(0).toBe(1);
-    } catch (e) {
-      expect(e.status).toBe(400);
+      console.log('e' + e);
+      expect(e.message).toEqual('The reading list item was already created.');
+      expect(e.name).toEqual('ExistingItemException');
     }
   });
 });

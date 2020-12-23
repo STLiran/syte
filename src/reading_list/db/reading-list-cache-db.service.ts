@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ReadingListItem } from '../reading_list_item';
 import { ReadingListDbInterface } from './reading-list-db-interface';
+import { ExistingItemException } from '../existing-item-exception';
 
 @Injectable()
 export class ReadingListCacheDbService implements ReadingListDbInterface {
@@ -11,8 +12,8 @@ export class ReadingListCacheDbService implements ReadingListDbInterface {
       this.map.set(item.id, item);
       return item;
     } else {
-      throw new BadRequestException(
-        'The Reading_list_item was already created.',
+      throw new ExistingItemException(
+        'The reading list item was already created.',
       );
     }
   }

@@ -24,9 +24,7 @@ export class ReadingListController {
   ) {}
 
   @Post()
-  async createReadingListItem(
-    @Body() body: ReadingListItem,
-  ): Promise<ReadingListItem> {
+  async createReadingListItem(@Body() body: any): Promise<ReadingListItem> {
     const item = await this.processInput(body);
 
     const readingListItem: ReadingListItem = await this.readingListService.createReadingListItem(

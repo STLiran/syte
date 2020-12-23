@@ -8,8 +8,7 @@ import { ReadingListItem } from './reading_list_item';
 describe('ReadingListService', () => {
   let service: ReadingListService;
   const ID = '1';
-  const FIRST = 'first-test';
-  const TXT = 'last-test';
+  const TXT = 'txt-test';
   const IS_DONE = false;
 
   beforeEach(async () => {
