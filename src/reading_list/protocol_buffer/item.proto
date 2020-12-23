@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package item;
+
+import "google/protobuf/timestamp.proto";
+
+message Item {
+  string id = 1;
+  string txt = 2;  // Unique ID number for this person.
+  bool isDone = 3;
+  google.protobuf.Timestamp last_updated = 4;
+}
