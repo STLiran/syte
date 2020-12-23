@@ -11,50 +11,65 @@ import {
 } from '@nestjs/common';
 import { ReadingListService } from './reading-list.service';
 import { ReadingListItem } from './reading_list_item';
-import { GrpcObject, ProtobufMessage } from 'grpc';
-import { AwesomeMessage } from './AwesomeSubMessage';
-import { Root } from 'protobufjs';
 import { ProtocolBufferService } from './protocol_buffer/protocol-buffer.service';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const protoLoader = require('@grpc/proto-loader');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const grpc = require('grpc');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const protobuf = require('protobufjs');
 
 @Controller('reading_list')
 export class ReadingListController {
+  private _isProtocolBuffer = true;
+
   constructor(
     private readonly readingListService: ReadingListService,
-    private readonly protocolBuffersService: ProtocolBufferService,
+    private readonly protocolBufferService: ProtocolBufferService,
     private logger: Logger,
   ) {}
 
   @Post()
-  private async createReadingListItem(
-    @Body() item: ReadingListItem,
+  async createReadingListItem(
+    @Body() body: ReadingListItem,
   ): Promise<ReadingListItem> {
-    const encoded = await this.protocolBuffersService.encode(item);
-    const decoded = await this.protocolBuffersService.decode(encoded);
-    this.logger.log('encoded' + encoded);
-    this.logger.log('decoded' + decoded);
-    return await this.readingListService.createReadingListItem(item);
+    const item = await this.processInput(body);
+
+    const readingListItem: ReadingListItem = await this.readingListService.createReadingListItem(
+      item,
+    );
+
+    return await this.processOutput(readingListItem);
+  }
+
+  async processOutput(readingListItem: ReadingListItem) {
+    let result;
+    if (this._isProtocolBuffer) {
+      result = await this.protocolBufferService.encode(readingListItem);
+    } else {
+      result = readingListItem;
+    }
+    return result;
+  }
+
+  async processInput(body: ReadingListItem) {
+    let item;
+    if (this._isProtocolBuffer) {
+      const decoded = await this.protocolBufferService.decode(body);
+      this.logger.log('Decoded the body input.');
+      item = decoded;
+    } else {
+      item = body;
+    }
+    return item;
   }
 
   @Get()
-  private async getAllReadingListItems(): Promise<ReadingListItem[]> {
+  async getAllReadingListItems(): Promise<ReadingListItem[]> {
     return await this.readingListService.getAllReadingListItems();
   }
 
   @Get(':id')
-  private async getReadingListItem(
-    @Param('id') id: string,
-  ): Promise<ReadingListItem> {
+  async getReadingListItem(@Param('id') id: string): Promise<ReadingListItem> {
     return await this.readingListService.getReadingListItem(id);
   }
 
   @Put(':id')
-  private async updateReadingListItem(
+  async updateReadingListItem(
     @Body() p: ReadingListItem,
   ): Promise<ReadingListItem> {
     return await this.readingListService.updateReadingListItem(p);
@@ -62,7 +77,7 @@ export class ReadingListController {
 
   // mark items as done
   @Patch(':id')
-  private async patchReadingListItem(
+  async patchReadingListItem(
     @Param('id') id: string,
     @Body() body: { isDone: boolean },
   ): Promise<ReadingListItem> {
@@ -70,9 +85,13 @@ export class ReadingListController {
   }
 
   @Delete(':id')
-  private async deleteReadingListItem(
+  async deleteReadingListItem(
     @Param('id') id: string,
   ): Promise<ReadingListItem> {
     return await this.readingListService.deleteReadingListItem(id);
+  }
+
+  set isProtocolBuffer(value: boolean) {
+    this._isProtocolBuffer = value;
   }
 }
