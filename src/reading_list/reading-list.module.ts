@@ -1,9 +1,10 @@
 import { Logger, Module } from '@nestjs/common';
 import { ReadingListController } from './reading-list.controller';
 import { ReadingListService } from './services/reading-list.service';
-import { CacheService } from './db/cache/cache.service';
+import { CacheService } from './services/persistence/cache/cache.service';
 import { ProtocolBufferService } from './protocol_buffer/protocol-buffer.service';
-import { LocalFileService } from './db/local-file/local-file.service';
+import { LocalFileService } from './services/persistence/local-file/local-file.service';
+import { InputValidationService } from './services/input-validation/input-validation.service';
 
 @Module({
   imports: [],
@@ -14,6 +15,7 @@ import { LocalFileService } from './db/local-file/local-file.service';
     Logger,
     ProtocolBufferService,
     LocalFileService,
+    InputValidationService,
   ],
 })
 export class ReadingListModule {}

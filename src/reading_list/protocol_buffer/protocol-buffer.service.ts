@@ -16,7 +16,7 @@ export class ProtocolBufferService implements ProtocolBuffeInterface {
   }
 
   async decode(buffer: any): Promise<{ [key: string]: any }> {
-    const root: Root = await protocolBuffer.load(this.PROTO_PATH);
+    const root: Root = await protocolBuffer.loadSync(this.PROTO_PATH);
     const Item = root.lookupType('item.Item');
     const message = Item.decode(buffer);
     return Item.toObject(message, {

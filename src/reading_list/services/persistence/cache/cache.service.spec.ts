@@ -1,8 +1,8 @@
 import { CacheService } from './cache.service';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ReadingListItem } from '../../dto/reading_list_item';
+import { ReadingListItem } from '../../../dto/reading_list_item';
 import { BadRequestException, Logger } from '@nestjs/common';
-import { ExistingItemException } from '../../exceptions/existing-item-exception';
+import { ExistingItemException } from '../../../exceptions/existing-item-exception';
 
 describe('CacheService', () => {
   let service: CacheService;

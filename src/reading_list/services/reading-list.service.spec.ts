@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ReadingListService } from './reading-list.service';
-import { CacheService } from '../db/cache/cache.service';
-import { LocalFileService } from '../db/local-file/local-file.service';
+import { CacheService } from './persistence/cache/cache.service';
+import { LocalFileService } from './persistence/local-file/local-file.service';
 import { Logger } from '@nestjs/common';
 import { ReadingListItem } from '../dto/reading_list_item';
 
@@ -25,10 +25,6 @@ describe('ReadingListService', () => {
     }).compile();
 
     service = module.get<ReadingListService>(ReadingListService);
-  });
-
-  it('test heartBeat.', async () => {
-    expect(await service.heartBeat()).toBe('heartBeat');
   });
 
   it('test createReadingListItem.', async () => {

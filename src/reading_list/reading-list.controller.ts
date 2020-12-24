@@ -11,53 +11,45 @@ import {
 } from '@nestjs/common';
 import { ReadingListService } from './services/reading-list.service';
 import { ReadingListItem } from './dto/reading_list_item';
-import { ProtocolBufferService } from './protocol_buffer/protocol-buffer.service';
+import { InputValidationService } from './services/input-validation/input-validation.service';
 
 @Controller('reading_list')
 export class ReadingListController {
-  private _isProtocolBuffer = false;
-
   constructor(
     private readonly readingListService: ReadingListService,
-    private readonly protocolBufferService: ProtocolBufferService,
+    private readonly inputValidationService: InputValidationService,
     private logger: Logger,
-  ) {
-    // readingListService
-    //   .init()
-    //   .then(() => this.logger.log('Init reading list service'));
+  ) {}
+
+  @Post('persist')
+  async persist() {
+    this.logger.log('Persisting..');
+    await this.readingListService.persist();
+    this.logger.log('Finished persisting');
   }
 
   @Post()
-  async createReadingListItem(@Body() body: any): Promise<ReadingListItem> {
-    const item = await this.processInput(body);
+  async createReadingListItem(
+    @Body() body: any,
+  ): Promise<ReadingListItem | Uint8Array> {
+    const isBuffer =
+      body &&
+      body.hasOwnProperty('type') &&
+      body['type'] == 'Buffer' &&
+      body.hasOwnProperty('data');
+    const item: ReadingListItem = await this.inputValidationService.processInput(
+      body,
+      isBuffer,
+    );
 
     const readingListItem: ReadingListItem = await this.readingListService.createReadingListItem(
       item,
     );
 
-    return await this.processOutput(readingListItem);
-  }
-
-  async processOutput(readingListItem: ReadingListItem) {
-    let result;
-    if (this._isProtocolBuffer) {
-      result = await this.protocolBufferService.encode(readingListItem);
-    } else {
-      result = readingListItem;
-    }
-    return result;
-  }
-
-  async processInput(body: ReadingListItem) {
-    let item;
-    if (this._isProtocolBuffer) {
-      const decoded = await this.protocolBufferService.decode(body);
-      this.logger.log('Decoded the body input.');
-      item = decoded;
-    } else {
-      item = body;
-    }
-    return item;
+    return await this.inputValidationService.processOutput(
+      readingListItem,
+      isBuffer,
+    );
   }
 
   @Get()
@@ -91,9 +83,5 @@ export class ReadingListController {
     @Param('id') id: string,
   ): Promise<ReadingListItem> {
     return await this.readingListService.deleteReadingListItem(id);
-  }
-
-  set isProtocolBuffer(value: boolean) {
-    this._isProtocolBuffer = value;
   }
 }

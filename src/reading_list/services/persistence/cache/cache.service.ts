@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { ReadingListItem } from '../../dto/reading_list_item';
+import { ReadingListItem } from '../../../dto/reading_list_item';
 import { CacheInterface } from './cache-interface';
-import { ExistingItemException } from '../../exceptions/existing-item-exception';
+import { ExistingItemException } from '../../../exceptions/existing-item-exception';
 
 @Injectable()
 export class CacheService implements CacheInterface {
@@ -15,9 +15,8 @@ export class CacheService implements CacheInterface {
       this.map.set(item.id, item);
       return item;
     } else {
-      throw new ExistingItemException(
-        'The reading list item was already created.',
-      );
+      this.logger.warn('The reading list item was already created.');
+      return item;
     }
   }
 

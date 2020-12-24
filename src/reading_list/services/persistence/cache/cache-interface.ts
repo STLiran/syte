@@ -1,4 +1,4 @@
-import { ReadingListItem } from '../../dto/reading_list_item';
+import { ReadingListItem } from '../../../dto/reading_list_item';
 
 export interface CacheInterface {
   saveReadingListItem(p: ReadingListItem): ReadingListItem;

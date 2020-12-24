@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LocalFileService } from './local-file.service';
 import { Logger } from '@nestjs/common';
-import { ReadingListItem } from '../../dto/reading_list_item';
+import { ReadingListItem } from '../../../dto/reading_list_item';
 import { CacheService } from '../cache/cache.service';
 import { Guid } from 'guid-typescript';
 
@@ -29,7 +29,7 @@ describe('LocalFileService', () => {
       );
       arr.push(item);
     }
-    const result: ReadingListItem[] = await service.save(arr);
+    const result: ReadingListItem[] = await service.persist(arr);
     // let res2: ReadingListItem[] = [];
 
     //TODO SLEEP

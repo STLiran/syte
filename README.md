@@ -42,6 +42,42 @@ $ Alternativly use just:
     dist\reading_list\protocol_buffer\ 
 ```
 
+## REST EXAMPLES
+```
+Create Item:
+
+@POST http://localhost:5060/reading_list
+
+Body ( encoded: )
+{
+    "type": "Buffer",
+    "data": [
+        10,
+        4,
+        116,
+        116,
+        101,
+        98,
+        18,
+        5,
+        116,
+        120,
+        116,
+        97,
+        100,
+        24,
+        1
+    ]
+}
+
+Body ( decoded: )
+{
+    "id": "id2",
+    "txt": "txt2",
+    "isDone": false
+}
+```
+
 ## Running the app
 
 ```bash
@@ -68,15 +104,7 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
 
 ## License
 
