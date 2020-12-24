@@ -15,6 +15,7 @@ const lineReader = require('line-reader');
 @Injectable()
 export class LocalFileService implements LocalFileInterface {
   private PATH = 'src/reading_list/resources/todo_list.txt';
+  // private PATH2 = 'src/reading_list/resources/todo_list_temp.txt';
 
   constructor(private logger: Logger, private cacheService: CacheService) {}
 
@@ -33,8 +34,9 @@ export class LocalFileService implements LocalFileInterface {
     try {
       this.logger.log(`Cleaning local file`);
       // {flags: 'w'} erase and write a new file
-      const stream = gracefulFs.createWriteStream(this.PATH, { flags: 'w' });
-      await stream.end();
+      fs.unlinkSync(this.PATH);
+      // const stream = gracefulFs.createWriteStream(this.PATH, { flags: 'w' });
+      // await stream.end();
       return true;
     } catch (e) {
       this.logger.error('The following error has occurred', e);
@@ -42,6 +44,25 @@ export class LocalFileService implements LocalFileInterface {
     }
   }
 
+  async addToTxt(items: ReadingListItem[]): Promise<ReadingListItem[]> {
+    try {
+      this.logger.log(`saving ${items?.length} items`);
+      const stream = await gracefulFs.createWriteStream(this.PATH, {
+        flags: 'a+',
+      });
+      this.logger.log(`Save items: saving ${items?.length} items.`);
+      await items.forEach((item) => {
+        this.logger.log(`Saved: ${item.id}`);
+        stream.write(`${item.id}:${item.txt}:${item.isDone ? 'V' : 'X'}\n`);
+      });
+      this.logger.log(`Finished saving items: saved ${items?.length} items.`);
+      await stream.end();
+      return items;
+    } catch (e) {
+      this.logger.error('The following error has occurred', e);
+      return [];
+    }
+  }
   async persist(items: ReadingListItem[]): Promise<ReadingListItem[]> {
     try {
       this.logger.log(`saving ${items?.length} items`);
@@ -49,13 +70,24 @@ export class LocalFileService implements LocalFileInterface {
       // const stream = await gracefulFs.createWriteStream(this.PATH, {
       //   flags: 'w',
       // });
-      const stream = await fs.createWriteStream(this.PATH, { flags: 'w' });
+      const stream = await gracefulFs.createWriteStream(this.PATH, {
+        flags: 'w+',
+      });
+
+      this.logger.log(`Save items: saving ${items?.length} items.`);
+      await items.forEach((item) => {
+        this.logger.log(`Saved: ${item.id}`);
+        stream.write(`${item.id}:${item.txt}:${item.isDone ? 'V' : 'X'}\n`);
+      });
+      this.logger.log(`Finished saving items: saved ${items?.length} items.`);
+      await stream.end();
+
       // this.sleep(30000);
       // setTimeout(async () => await this.saveItems(items, stream), 3000);
       // this.sleep(30000);
       // setTimeout(async () => await stream.end(), 3000);
       // await this.sleep(30000);
-      await this.saveItems(items, stream);
+      // await this.saveItems(items, stream);
       // await stream.end();
       return items;
     } catch (e) {

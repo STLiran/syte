@@ -9,14 +9,14 @@ export class CacheService implements CacheInterface {
 
   constructor(private logger: Logger) {}
 
-  saveReadingListItem(item: ReadingListItem): ReadingListItem {
+  async saveReadingListItem(item: ReadingListItem): Promise<ReadingListItem> {
     if (!this.map.has(item.id)) {
       this.logger.log(`The item id ${item.id} was saved to the cache.`);
       this.map.set(item.id, item);
       return item;
     } else {
       this.logger.warn('The reading list item was already created.');
-      return item;
+      return null;
     }
   }
 

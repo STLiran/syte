@@ -1,5 +1,0 @@
-ss2:2txt2:V
-ttt:2txt2:V
-B:2txt2:V
-T:fsfs:V
-T2:fs2fs:V

@@ -37,15 +37,24 @@ export class ReadingListService
     if (items) {
       for (const readingListItem of items) {
         this.logger.log(`Loaded ${readingListItem.id}`);
-        this.cacheService.saveReadingListItem(readingListItem);
+        await this.cacheService.saveReadingListItem(readingListItem);
       }
     }
+    // await this.localFileService.delete();
+
     return items;
   }
 
-  async createReadingListItem(p: ReadingListItem): Promise<ReadingListItem> {
+  async createReadingListItem(item: ReadingListItem): Promise<ReadingListItem> {
     this.logger.log('Creating reading_list item');
-    return this.cacheService.saveReadingListItem(p);
+    const res: ReadingListItem = await this.cacheService.saveReadingListItem(
+      item,
+    );
+    if (res) {
+      await this.localFileService.addToTxt([item]);
+    }
+
+    return item;
   }
 
   async getAllReadingListItems(): Promise<ReadingListItem[]> {
@@ -63,17 +72,28 @@ export class ReadingListService
     isDone: boolean,
   ): Promise<ReadingListItem> {
     this.logger.log('patch reading_list');
-    return this.cacheService.patchReadingListItem(id, isDone);
+    const item: ReadingListItem = this.cacheService.patchReadingListItem(
+      id,
+      isDone,
+    );
+    await this.persist();
+    return item;
   }
 
   async updateReadingListItem(p: ReadingListItem): Promise<ReadingListItem> {
     this.logger.log('update reading_list');
-    return this.cacheService.updateReadingListItem(p);
+    //TODO update the txt file
+    const item: ReadingListItem = this.cacheService.updateReadingListItem(p);
+    await this.persist();
+    return item;
   }
 
   async deleteReadingListItem(id: string): Promise<ReadingListItem> {
     this.logger.log('delete reading_list');
-    return this.cacheService.deleteReadingListItem(id);
+    //TODO update the txt file
+    const item: ReadingListItem = this.cacheService.deleteReadingListItem(id);
+    await this.persist();
+    return item;
   }
 
   // Create an rxjs Subject that your application can subscribe to
@@ -83,7 +103,7 @@ export class ReadingListService
   async onModuleDestroy() {
     console.log('Executing OnDestroy Hook');
     //TODO
-    await this.persist();
+    // await this.persist();
   }
 
   // Subscribe to the shutdown in your main.ts

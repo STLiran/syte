@@ -1,7 +1,7 @@
 import { ReadingListItem } from '../../../dto/reading_list_item';
 
 export interface CacheInterface {
-  saveReadingListItem(p: ReadingListItem): ReadingListItem;
+  saveReadingListItem(item: ReadingListItem): Promise<ReadingListItem>;
 
   getAllReadingListItems(): ReadingListItem[];
 
