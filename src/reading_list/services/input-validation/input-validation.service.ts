@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-  LoggerService,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ReadingListItem } from '../../dto/reading_list_item';
 import { ProtocolBufferService } from '../../protocol_buffer/protocol-buffer.service';
 import { InputValidationInterface } from './input-validation.interface';
@@ -62,5 +57,14 @@ export class InputValidationService implements InputValidationInterface {
       item = new ReadingListItem(body['id'], body['txt'], body['isDone']);
     }
     return item;
+  }
+
+  isProtocolBufferRequest(body: any): boolean {
+    return (
+      body &&
+      body.hasOwnProperty('type') &&
+      body['type'] == 'Buffer' &&
+      body.hasOwnProperty('data')
+    );
   }
 }

@@ -2,15 +2,14 @@ import { CacheService } from './cache.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ReadingListItem } from '../../../dto/reading_list_item';
 import { BadRequestException, Logger } from '@nestjs/common';
-import { ExistingItemException } from '../../../exceptions/existing-item-exception';
 
 describe('CacheService', () => {
   let service: CacheService;
-  const ID = '1';
+  const ID = 'test-id-1';
   const TXT = 'last-test';
   const IS_DONE = false;
 
-  const ID2 = '2';
+  const ID2 = 'test-id-2';
   const LAST2 = 'last-test-2';
 
   beforeEach(async () => {
@@ -26,23 +25,22 @@ describe('CacheService', () => {
     expect(listItems.length).toBe(0);
   });
 
-  it('One Reading_list_item should be returned, After saving list item', () => {
+  it('One Reading_list_item should be returned, After saving list item', async () => {
     const p: ReadingListItem = new ReadingListItem(ID, TXT, IS_DONE);
-    const item: ReadingListItem = service.saveReadingListItem(p);
+    const item: ReadingListItem = await service.saveReadingListItem(p);
     expect(item.id).toBe(ID);
 
     const items: ReadingListItem[] = service.getAllReadingListItems();
     expect(items.length).toBe(1);
   });
 
-  it('Saving twice results at Exception being thrown', () => {
+  it('Saving twice results at Exception being thrown', async () => {
     const p1 = new ReadingListItem(ID, TXT, IS_DONE);
-    const item: ReadingListItem = service.saveReadingListItem(p1);
+    const item: ReadingListItem = await service.saveReadingListItem(p1);
     expect(item.id).toBe(ID);
 
-    expect(() => service.saveReadingListItem(p1)).toThrow(
-      ExistingItemException,
-    );
+    const duplicate = await service.saveReadingListItem(p1);
+    expect(duplicate).toEqual(item);
   });
 
   it('Get unexciting reading_list', () => {
@@ -89,12 +87,12 @@ describe('CacheService', () => {
     );
   });
 
-  it('Full Flow', () => {
+  it('Full Flow', async () => {
     const noItems: ReadingListItem[] = service.getAllReadingListItems();
     expect(noItems.length).toBe(0);
 
     const p: ReadingListItem = new ReadingListItem(ID, TXT, IS_DONE);
-    const item: ReadingListItem = service.saveReadingListItem(p);
+    const item: ReadingListItem = await service.saveReadingListItem(p);
     expect(item.id).toBe(ID);
 
     const items: ReadingListItem[] = service.getAllReadingListItems();

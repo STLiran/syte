@@ -21,22 +21,13 @@ export class ReadingListController {
     private logger: Logger,
   ) {}
 
-  @Post('persist')
-  async persist() {
-    this.logger.log('Persisting..');
-    await this.readingListService.persist();
-    this.logger.log('Finished persisting');
-  }
-
   @Post()
   async createReadingListItem(
     @Body() body: any,
   ): Promise<ReadingListItem | Uint8Array> {
-    const isBuffer =
-      body &&
-      body.hasOwnProperty('type') &&
-      body['type'] == 'Buffer' &&
-      body.hasOwnProperty('data');
+    this.logger.log('Creating list item request received');
+
+    const isBuffer = this.inputValidationService.isProtocolBufferRequest(body);
     const item: ReadingListItem = await this.inputValidationService.processInput(
       body,
       isBuffer,
@@ -54,27 +45,46 @@ export class ReadingListController {
 
   @Get()
   async getAllReadingListItems(): Promise<ReadingListItem[]> {
+    this.logger.log('Get all list items request received');
+
     return await this.readingListService.getAllReadingListItems();
   }
 
   @Get(':id')
   async getReadingListItem(@Param('id') id: string): Promise<ReadingListItem> {
+    this.logger.log('Get list item request received');
+
     return await this.readingListService.getReadingListItem(id);
   }
 
   @Put(':id')
   async updateReadingListItem(
-    @Body() p: ReadingListItem,
-  ): Promise<ReadingListItem> {
-    return await this.readingListService.updateReadingListItem(p);
+    @Body() body: any,
+  ): Promise<ReadingListItem | Uint8Array> {
+    this.logger.log('Update list item request received');
+    const isBuffer = this.inputValidationService.isProtocolBufferRequest(body);
+    const item: ReadingListItem = await this.inputValidationService.processInput(
+      body,
+      isBuffer,
+    );
+
+    const readingListItem = await this.readingListService.updateReadingListItem(
+      item,
+    );
+    return await this.inputValidationService.processOutput(
+      readingListItem,
+      isBuffer,
+    );
   }
 
-  // mark items as done
+  // mark items as done/undone
   @Patch(':id')
   async patchReadingListItem(
     @Param('id') id: string,
     @Body() body: { isDone: boolean },
   ): Promise<ReadingListItem> {
+    this.logger.log('Patch list item request received');
+
     return await this.readingListService.patchReadingListItem(id, body.isDone);
   }
 
@@ -82,6 +92,8 @@ export class ReadingListController {
   async deleteReadingListItem(
     @Param('id') id: string,
   ): Promise<ReadingListItem> {
+    this.logger.log('Delete list item request received');
+
     return await this.readingListService.deleteReadingListItem(id);
   }
 }

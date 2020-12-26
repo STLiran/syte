@@ -5,5 +5,7 @@ export interface LocalFileInterface {
 
   persist(items: ReadingListItem[]): Promise<ReadingListItem[]>;
 
+  addToTxt(items: ReadingListItem[]): Promise<ReadingListItem[]>;
+
   delete(): Promise<boolean>;
 }

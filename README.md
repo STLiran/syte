@@ -31,52 +31,104 @@
 ```bash
 $ yarn install
 $ nest build
+```
 
+##  Protocol Buffer
+```
+In Order to allow support for the protocol buffer,
+The proto file should be copy:
 $ WIN64: yarn build:win
 $ OSX(untested):yarn build:osx
-$ Alternativly use just: 
-    nest build
-  and copy the file yourself from:
+$ Alternativly just copy the file yourself from:
     src\reading_list\protocol_buffer\*.proto
   to: 
     dist\reading_list\protocol_buffer\ 
+
+In order to use a protocol buffer send a body in a given structure: 
+    {
+        "type": "Buffer",
+        "data": [ Uint8Array DATA ]
+    }
 ```
 
-## REST EXAMPLES
+## REST APIS
+```
+Get item:
+
+    @GET http://localhost:5060/reading_list/:id
+```
+
+```
+Get all item:
+   
+   @GET http://localhost:5060/reading_list
+```
+
 ```
 Create Item:
 
-@POST http://localhost:5060/reading_list
+    @POST http://localhost:5060/reading_list
 
-Body ( encoded: )
-{
-    "type": "Buffer",
-    "data": [
-        10,
-        4,
-        116,
-        116,
-        101,
-        98,
-        18,
-        5,
-        116,
-        120,
-        116,
-        97,
-        100,
-        24,
-        1
-    ]
-}
+    Body ( encoded: )
+    {
+        "type": "Buffer",
+        "data": [
+            10,
+            4,
+            116,
+            116,
+            101,
+            98,
+            18,
+            5,
+            116,
+            120,
+            116,
+            97,
+            100,
+            24,
+            1
+        ]
+    }
 
-Body ( decoded: )
-{
-    "id": "id2",
-    "txt": "txt2",
-    "isDone": false
-}
+    Body ( decoded: )
+    {
+        "id": "id2",
+        "txt": "txt2",
+        "isDone": false
+    }
 ```
+
+```
+Patch item isDone status:
+
+    @PATCH http://localhost:5060/reading_list/:id
+
+    Body ( decoded: )
+    {
+        "isDone": true
+    }
+```
+
+```
+Update item :
+
+    @UPDATE http://localhost:5060/reading_list/:id
+
+    Body ( decoded: )
+    {
+        "id": ":id",
+        "txt": "new txt",
+        "isDone": false
+    }
+```
+
+```
+Delete item:
+
+    @DELETE http://localhost:5060/reading_list/:id
+```
+
 
 ## Running the app
 

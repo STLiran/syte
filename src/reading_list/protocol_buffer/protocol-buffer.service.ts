@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Root } from 'protobufjs';
-import { ProtocolBuffeInterface } from './protocol-buffer.interface';
+import { ProtocolBufferInterface } from './protocol-buffer.interface';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 // const protoLoader = require('@grpc/proto-loader');
 // // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -9,7 +9,7 @@ import { ProtocolBuffeInterface } from './protocol-buffer.interface';
 const protocolBuffer = require('protobufjs');
 
 @Injectable()
-export class ProtocolBufferService implements ProtocolBuffeInterface {
+export class ProtocolBufferService implements ProtocolBufferInterface {
   private readonly PROTO_PATH: string;
   constructor(private logger: Logger) {
     this.PROTO_PATH = __dirname + '/item.proto';

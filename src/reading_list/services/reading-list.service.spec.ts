@@ -4,10 +4,11 @@ import { CacheService } from './persistence/cache/cache.service';
 import { LocalFileService } from './persistence/local-file/local-file.service';
 import { Logger } from '@nestjs/common';
 import { ReadingListItem } from '../dto/reading_list_item';
+import { LocalFileMock } from './persistence/local-file/local-file.mock';
 
 describe('ReadingListService', () => {
   let service: ReadingListService;
-  const ID = '1';
+  const ID = 'reading-list-id-1';
   const TXT = 'txt-test';
   const IS_DONE = false;
 
@@ -17,7 +18,7 @@ describe('ReadingListService', () => {
         ReadingListService,
         {
           provide: LocalFileService,
-          useClass: CacheService,
+          useClass: LocalFileMock,
         },
         CacheService,
         Logger,

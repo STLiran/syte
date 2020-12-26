@@ -13,9 +13,10 @@ describe('ProtocolBufferService', () => {
     service = module.get<ProtocolBufferService>(ProtocolBufferService);
   });
 
-  it('Decode should reverted encoded value to this original form', () => {
-    const enocded = service.encode({ id: 'id' });
-    const decoded = service.decode(enocded);
-    expect(service.encode({ id: 'id' })).toEqual(decoded);
+  it('Decode should reverted encoded value to this original form', async () => {
+    const payload = { id: 'id' };
+    const encoded = await service.encode(payload);
+    const decoded = await service.decode(encoded);
+    expect(payload).toEqual(decoded);
   });
 });

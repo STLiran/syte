@@ -10,4 +10,6 @@ export interface InputValidationInterface {
     body: ReadingListItem | Uint8Array,
     isBuffer: boolean,
   ): Promise<ReadingListItem>;
+
+  isProtocolBufferRequest(body: any): boolean;
 }

@@ -5,6 +5,7 @@ import { CacheService } from './services/persistence/cache/cache.service';
 import { ProtocolBufferService } from './protocol_buffer/protocol-buffer.service';
 import { LocalFileService } from './services/persistence/local-file/local-file.service';
 import { InputValidationService } from './services/input-validation/input-validation.service';
+import { LocalFileMock } from './services/persistence/local-file/local-file.mock';
 
 @Module({
   imports: [],
@@ -14,6 +15,7 @@ import { InputValidationService } from './services/input-validation/input-valida
     ReadingListService,
     Logger,
     ProtocolBufferService,
+    LocalFileMock,
     LocalFileService,
     InputValidationService,
   ],
