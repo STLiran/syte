@@ -36,9 +36,9 @@ $ nest build
 ##  Protocol Buffer
 ```
 In Order to allow support for the protocol buffer,
-The proto file should be copy:
+The proto file should be copy, The following script hanlde this for win64:
 $ WIN64: yarn build:win
-$ OSX(untested):yarn build:osx
+
 $ Alternativly just copy the file yourself from:
     src\reading_list\protocol_buffer\*.proto
   to: 
@@ -47,8 +47,12 @@ $ Alternativly just copy the file yourself from:
 In order to use a protocol buffer send a body in a given structure: 
     {
         "type": "Buffer",
-        "data": [ Uint8Array DATA ]
+        "data": Uint8Array DATA
     }
+
+The data's value is the encoded value ( you can check create item example for a valid input).
+
+Curently the apis that support this functionlty are: create and update.
 ```
 
 ## REST APIS
@@ -104,7 +108,7 @@ Patch item isDone status:
 
     @PATCH http://localhost:5060/reading_list/:id
 
-    Body ( decoded: )
+    Body
     {
         "isDone": true
     }
@@ -115,7 +119,7 @@ Update item :
 
     @UPDATE http://localhost:5060/reading_list/:id
 
-    Body ( decoded: )
+    Body
     {
         "id": ":id",
         "txt": "new txt",
