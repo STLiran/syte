@@ -63,7 +63,7 @@ Get item:
 ```
 
 ```
-Get all item:
+Get all items:
    
    @GET http://localhost:5060/reading_list
 ```
@@ -117,7 +117,7 @@ Patch item isDone status:
 ```
 Update item :
 
-    @UPDATE http://localhost:5060/reading_list/:id
+    @PUT http://localhost:5060/reading_list/:id
 
     Body
     {
